@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "command-line-args": "^5.1.1",
     "jimp": "^0.2.27"
   },
   "devDependencies": {},

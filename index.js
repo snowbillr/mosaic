@@ -1,15 +1,41 @@
+const commandLineArgs = require('command-line-args');
 const Jimp = require('jimp');
+
+const argDefinitions = [
+  { name: 'cellSize', alias: 'c', type: Number },
+  { name: 'source', alias: 's', type: String },
+  { name: 'output', alias: 'o', type: String },
+  { name: 'help', alias: 'h', type: Boolean }
+]
+
+const defaultArgs = {
+  source: 'input.jpg',
+  output: 'moasic.jpg',
+  cellSize: 20
+};
+const args = { ...defaultArgs, ...commandLineArgs(argDefinitions) };
+
+if (args.help) {
+  console.log(`
+    Usage:
+
+    --source, -s: input file path
+    --output, -o: output file path
+    --cellSize, -c: size of mosaic cells
+  `);
+  return;
+}
 
 // super basic algorithm with color cells
 // 1. break source image into cells with average colors
 // 2. build mosaic of average colors
-Jimp.read("input.jpg")
+Jimp.read(args.source)
   .then(processImage)
   .catch(handleReadError);
 
 function processImage(image) {
   // generate data structure of cells with avg color
-  const cellSize = 20;
+  const cellSize = args.cellSize;
   const rawCells = [];
 
   // make a rawCells of cells
@@ -64,7 +90,7 @@ function processImage(image) {
 
     setPixelChannels(mosaic.bitmap, index, averageColorCells[row][col]);
   });
-  mosaic.write('mosaic.jpg');
+  mosaic.write(args.output);
 }
 
 function getPixelChannels(bitmap, index) {
